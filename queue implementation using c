@@ -1,0 +1,67 @@
+#include<stdio.h>
+#include<conic.h>
+#define
+MAXSIZE10
+  
+int Queue[MAXSIZE];
+int front=0;
+int rear = -1;
+
+void main()
+{
+    int choice();
+    clrscr();
+
+ do{
+    printf("\n1. insert\n2. delete\n3. Display\n4. Exit\n");
+    printf("Enter your choice:");
+     
+      scanf("%d", &choice);
+    switch(choice){
+        case 1:
+             insert(); break;
+        case 2:
+            delete(); break;
+        case 3:
+            display(); break;
+               }
+}
+while(choice!=4);
+getch();
+}
+Insert(){
+    int n;
+      if (rear==MAXSIZE-1)
+      {printf("Queue overflow\n");
+      //check if the queue is full (overflow condition).}
+      else{
+        printf("Enter an element");
+        scanf("%d", &n);
+        rear++;
+      //increment the rear index and add the element
+        Queue[rear]=n;
+      }
+}
+
+delete(){
+    int n;
+     if (front>rear)
+    { printf("queue underflow\n");     //check if the queue is empty(underflow condition)
+    }
+    else {
+        n=queue(front);
+        front++;  // Increment the front index
+         printf("delete element is %d\n", n); //remove and return the top element.
+    }
+    }
+  Display() {
+    if (front > rear) {
+        printf("\nQueue is empty");
+    } else {
+        printf("\nQueue elements: ");
+        for (int i = front; i <= rear; i++) {
+            printf("%d ", Queue[i]);
+        }
+        printf("\n");
+    }
+}
