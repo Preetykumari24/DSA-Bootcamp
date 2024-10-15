@@ -1,0 +1,133 @@
+ //lift management system using queue in C.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100  // Maximum number of floors queue can hold
+
+// Structure to represent a queue
+struct Queue {
+    int items[MAX];
+    int front;
+    int rear;
+};
+
+// Function to create a queue
+struct Queue* createQueue() {
+    struct Queue* q = (struct Queue*)malloc(sizeof(struct Queue));
+    q->front = -1;
+    q->rear = -1;
+    return q;
+}
+
+// Function to check if the queue is empty
+int isEmpty(struct Queue* q) {
+    return q->front == -1;
+}
+
+// Function to check if the queue is full
+int isFull(struct Queue* q) {
+    return q->rear == MAX - 1;
+}
+
+// Function to add a request to the queue
+void enqueue(struct Queue* q, int value) {
+    if (isFull(q)) {
+        printf("Queue is full. Cannot add more requests.\n");
+    } else {
+        if (q->front == -1) {
+            q->front = 0;
+        }
+        q->rear++;
+        q->items[q->rear] = value;
+        printf("Request for floor %d added to the queue.\n", value);
+    }
+}
+
+// Function to remove a request from the queue
+int dequeue(struct Queue* q) {
+    int value;
+    if (isEmpty(q)) {
+        printf("Queue is empty. No requests to process.\n");
+        return -1;
+    } else {
+        value = q->items[q->front];
+        if (q->front >= q->rear) {
+            // Reset the queue after last element is dequeued
+            q->front = -1;
+            q->rear = -1;
+        } else {
+            q->front++;
+        }
+        return value;
+    }
+}
+
+// Function to display the queue (pending requests)
+void displayQueue(struct Queue* q) {
+    if (isEmpty(q)) {
+        printf("No pending requests.\n");
+    } else {
+        printf("Pending requests: ");
+        for (int i = q->front; i <= q->rear; i++) {
+            printf("%d ", q->items[i]);
+        }
+        printf("\n");
+    }
+}
+
+// Function to simulate lift movement and process requests
+void processLiftRequests(struct Queue* q, int currentFloor) {
+    while (!isEmpty(q)) {
+        int nextFloor = dequeue(q);
+        printf("Lift moving from floor %d to floor %d...\n", currentFloor, nextFloor);
+        currentFloor = nextFloor;
+        printf("Lift arrived at floor %d.\n", currentFloor);
+    }
+}
+
+int main() {
+    struct Queue* liftQueue = createQueue();
+    int currentFloor = 0;
+    int choice, floor;
+
+    printf("Lift Management System\n");
+    printf("Initial floor: %d\n", currentFloor);
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Add lift request\n");
+        printf("2. Process lift requests\n");
+        printf("3. Display pending requests\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter floor number (0-100): ");
+                scanf("%d", &floor);
+                if (floor >= 0 && floor <= 100) {
+                    enqueue(liftQueue, floor);
+                } else {
+                    printf("Invalid floor number.\n");
+                }
+                break;
+            case 2:
+                processLiftRequests(liftQueue, currentFloor);
+                break;
+            case 3:
+                displayQueue(liftQueue);
+                break;
+            case 4:
+                printf("Exiting lift management system.\n");
+                break;
+            default:
+                printf("Invalid choice.\n");
+        }
+    } while (choice != 4);
+
+    free(liftQueue);
+    return 0;
+}
+
