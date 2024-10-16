@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAXSIZE 10  // Define maximum size of the deque
+
+typedef struct {
+    int items[MAXSIZE];
+    int front, rear;
+} Deque;
+
+// Function prototypes
+void insertFront(Deque *dq, int value);
+void insertRear(Deque *dq, int value);
+int deleteFront(Deque *dq);
+int deleteRear(Deque *dq);
+void display(Deque *dq);
+int isFull(Deque *dq);
+int isEmpty(Deque *dq);
+
+int main() {
+    Deque dq;
+    dq.front = -1;
+    dq.rear = -1;
+
+    int choice, value;
+
+    do {
+        printf("\n1. Insert Front\n2. Insert Rear\n3. Delete Front\n4. Delete Rear\n5. Display\n6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert at front: ");
+                scanf("%d", &value);
+                insertFront(&dq, value);
+                break;
+            case 2:
+                printf("Enter value to insert at rear: ");
+                scanf("%d", &value);
+                insertRear(&dq, value);
+                break;
+            case 3:
+                deleteFront(&dq);
+                break;
+            case 4:
+                deleteRear(&dq);
+                break;
+            case 5:
+                display(&dq);
+                break;
+            case 6:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    } while (choice != 6);
+
+    return 0;
+}
+
+// Function to check if the deque is full
+int isFull(Deque *dq) {
+    return ((dq->front == 0 && dq->rear == MAXSIZE - 1) || (dq->front == dq->rear + 1));
+}
+
+// Function to check if the deque is empty
+int isEmpty(Deque *dq) {
+    return (dq->front == -1);
+}
+
+// Function to insert an element at the front of the deque
+void insertFront(Deque *dq, int value) {
+    if (isFull(dq)) {
+        printf("Deque is full!\n");
+        return;
+    }
+
+    if (dq->front == -1) {  // If deque is initially empty
+        dq->front = 0;
+        dq->rear = 0;
+    } else if (dq->front == 0) {  // Circular wrapping
+        dq->front = MAXSIZE - 1;
+    } else {
+        dq->front = dq->front - 1;
+    }
+    dq->items[dq->front] = value;
+    printf("Inserted %d at front\n", value);
+}
+
+// Function to insert an element at the rear of the deque
+void insertRear(Deque *dq, int value) {
+    if (isFull(dq)) {
+        printf("Deque is full!\n");
+        return;
+    }
+
+    if (dq->front == -1) {  // If deque is initially empty
+        dq->front = 0;
+        dq->rear = 0;
+    } else if (dq->rear == MAXSIZE - 1) {  // Circular wrapping
+        dq->rear = 0;
+    } else {
+        dq->rear = dq->rear + 1;
+    }
+    dq->items[dq->rear] = value;
+    printf("Inserted %d at rear\n", value);
+}
+
+// Function to delete an element from the front of the deque
+int deleteFront(Deque *dq) {
+    int element;
+    if (isEmpty(dq)) {
+        printf("Deque is empty!\n");
+        return -1;
+    }
+
+    element = dq->items[dq->front];
+    if (dq->front == dq->rear) {  // The deque becomes empty after this deletion
+        dq->front = -1;
+        dq->rear = -1;
+    } else if (dq->front == MAXSIZE - 1) {  // Circular increment
+        dq->front = 0;
+    } else {
+        dq->front = dq->front + 1;
+    }
+    printf("Deleted %d from front\n", element);
+    return element;
+}
+
+// Function to delete an element from the rear of the deque
+int deleteRear(Deque *dq) {
+    int element;
+    if (isEmpty(dq)) {
+        printf("Deque is empty!\n");
+        return -1;
+    }
+
+    element = dq->items[dq->rear];
+    if (dq->front == dq->rear) {  // The deque becomes empty after this deletion
+        dq->front = -1;
+        dq->rear = -1;
+    } else if (dq->rear == 0) {  // Circular decrement
+        dq->rear = MAXSIZE - 1;
+    } else {
+        dq->rear = dq->rear - 1;
+    }
+    printf("Deleted %d from rear\n", element);
+    return element;
+}
+
+// Function to display the elements of the deque
+void display(Deque *dq) {
+    int i;
+    if (isEmpty(dq)) {
+        printf("Deque is empty!\n");
+    } else {
+        printf("Front -> %d\n", dq->front);
+        printf("Items -> ");
+        for (i = dq->front; i != dq->rear; i = (i + 1) % MAXSIZE) {
+            printf("%d ", dq->items[i]);
+        }
+        printf("%d\n", dq->items[i]);  // Print the last element
+        printf("Rear -> %d\n", dq->rear);
+    }
+}
